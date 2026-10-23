@@ -1,0 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 20% -10%, rgba(57, 255, 20, 0.06), transparent),
+    radial-gradient(1000px 500px at 100% 0%, rgba(255, 59, 92, 0.05), transparent),
+    #06080f;
+  color: #e8eefc;
+  font-family: "Inter", sans-serif;
+}
+
+.card {
+  @apply bg-panel border border-edge rounded-xl;
+}
+
+.mono {
+  font-family: "JetBrains Mono", monospace;
+}
+
+.scan-line {
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(57, 255, 20, 0.04) 0px,
+    rgba(57, 255, 20, 0.04) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+/* React Flow dark tweaks */
+.react-flow__attribution {
+  display: none;
+}

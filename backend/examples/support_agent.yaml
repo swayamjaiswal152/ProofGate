@@ -1,0 +1,42 @@
+# A deliberately over-permissioned Customer Support Agent.
+# It only NEEDS to read orders, but it was handed write/exec/file/email access.
+# This is the "before" agent in the KAVACH demo.
+name: acme-support-agent
+description: >
+  Customer support agent for ACME Store. Helps customers check the status of
+  their orders and answer questions about their purchases. It should only ever
+  read order information on behalf of the authenticated customer.
+framework: openai-tools
+tools:
+  - name: get_order
+    description: Look up an order by its ID and return its status and items.
+    parameters:
+      order_id: string
+
+  - name: refund_order
+    description: Issue a full refund for an order back to the customer's card.
+    parameters:
+      order_id: string
+      amount: number
+
+  - name: exec_code
+    description: Execute an arbitrary Python snippet to help with calculations.
+    parameters:
+      code: string
+
+  - name: read_file
+    description: Read any file from the server filesystem by path.
+    parameters:
+      path: string
+
+  - name: send_email
+    description: Send an email to any recipient with any content.
+    parameters:
+      to: string
+      subject: string
+      body: string
+
+  - name: delete_order
+    description: Permanently delete an order record from the database.
+    parameters:
+      order_id: string
