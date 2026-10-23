@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { api } from "./api";
 import AttackGraph from "./components/AttackGraph";
 import RiskGauge from "./components/RiskGauge";
+import ShadowLab from "./components/ShadowLab";
 
 const DECISION_STYLE = {
   allow: { c: "#00e39a", bg: "rgba(0,227,154,0.12)" },
@@ -36,6 +37,7 @@ export default function App() {
   const [harden, setHarden] = useState(null);
   const [verifyData, setVerify] = useState(null);
   const [busy, setBusy] = useState("");
+  const [view, setView] = useState("dashboard");
 
   useEffect(() => {
     api.example().then((d) => setConfig(d.config)).catch(() => {});
@@ -80,17 +82,30 @@ export default function App() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          {verifyData && (
-            <Badge
-              color={verifyData.after.verdict === "SAFE_TO_DEPLOY" ? "#00e39a" : "#ff3b5c"}
-              bg={verifyData.after.verdict === "SAFE_TO_DEPLOY" ? "rgba(0,227,154,.12)" : "rgba(255,59,92,.12)"}
-            >
-              {verifyData.after.verdict.replace(/_/g, " ")}
-            </Badge>
-          )}
+          <div className="flex items-center gap-1 bg-ink rounded-lg p-0.5 border border-edge">
+            {["dashboard", "shadow lab"].map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v === "shadow lab" ? "shadow" : "dashboard")}
+                className="mono text-[11px] px-3 py-1 rounded-md transition"
+                style={{
+                  color: (view === "shadow" ? "shadow lab" : "dashboard") === v ? "#39ff14" : "#8aa0c8",
+                  background:
+                    (view === "shadow" ? "shadow lab" : "dashboard") === v
+                      ? "rgba(57,255,20,0.1)"
+                      : "transparent",
+                }}
+              >
+                {v.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <span className="text-[10px] text-muted mono">Syntax Error · IIT Roorkee</span>
         </div>
       </header>
+
+      {view === "shadow" && <ShadowLab config={config} />}
+      {view === "dashboard" && (
 
       <div className="flex-1 grid grid-cols-12 gap-4 p-4">
         {/* LEFT: config + actions */}
@@ -232,6 +247,7 @@ export default function App() {
           </div>
         </div>
       </div>
+      )}
     </div>
   );
 }

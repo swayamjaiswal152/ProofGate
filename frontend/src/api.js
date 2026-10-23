@@ -17,4 +17,6 @@ export const api = {
   harden: (config, task_hint = "") => post("/api/harden", { config, task_hint }),
   simulate: (config, policy = null) => post("/api/simulate", { config, policy }),
   verify: (config) => post("/api/verify", { config }),
+  twin: (config) => post("/api/twin", { config }),
+  llmStatus: () => fetch(BASE + "/api/llm-status").then((r) => r.json()),
 };
