@@ -156,7 +156,7 @@ def generate(agent: AgentConfig, n_attacks: int = 25, n_legit: int = 25) -> dict
             for a in attacks:
                 r = by_tool.get(a["target_tool"])
                 if r:
-                    a["owasp"] = r.get("owasp", a["owasp"])
+                    # Keep the technique's canonical OWASP tag; add LLM rationale only.
                     a["rationale"] = r.get("why_dangerous", "")
         else:
             legit = _fallback_legit(agent, n_legit)

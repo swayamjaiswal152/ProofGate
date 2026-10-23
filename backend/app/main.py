@@ -10,6 +10,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 from .core.policy import policy_diff, recommend_policy
@@ -123,6 +124,36 @@ def twin_endpoint(body: ConfigBody) -> dict:
         "policy": policy.model_dump(),
         "diff": policy_diff(result.agent, policy),
     }
+
+
+class ReportBody(BaseModel):
+    config: str
+    twin: dict | None = None  # pass the /api/twin result to skip re-running Claude
+
+
+@app.post("/api/report", response_class=HTMLResponse)
+def report_endpoint(body: ReportBody) -> HTMLResponse:
+    """Render the Evidence Ledger as a print-ready HTML audit report."""
+    from .core.report import assemble_evidence, build_report_html
+
+    if body.twin:
+        agent = scan(body.config).agent  # fast deterministic re-scan for tool list
+        t = body.twin
+        evidence = {
+            "agent": agent.model_dump(),
+            "attacks": t.get("attacks", []),
+            "legit": t.get("legit", []),
+            "before": t["before"],
+            "after": t["after"],
+            "policy": t.get("policy", {}),
+            "risk_before": t.get("risk_before", 0),
+            "risk_after": t.get("risk_after", 0),
+            "source": t.get("source", "fallback"),
+        }
+    else:
+        evidence = assemble_evidence(body.config)
+
+    return HTMLResponse(content=build_report_html(evidence))
 
 
 @app.post("/api/verify")

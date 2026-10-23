@@ -19,4 +19,10 @@ export const api = {
   verify: (config) => post("/api/verify", { config }),
   twin: (config) => post("/api/twin", { config }),
   llmStatus: () => fetch(BASE + "/api/llm-status").then((r) => r.json()),
+  reportHtml: (config, twin) =>
+    fetch(BASE + "/api/report", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ config, twin }),
+    }).then((r) => r.text()),
 };
