@@ -82,6 +82,15 @@ export default function ShadowLab({ config }) {
     setBusy(false);
   };
 
+  const openReport = async () => {
+    if (!twin) return;
+    const htmlStr = await api.reportHtml(config, twin);
+    const w = window.open("", "_blank");
+    if (!w) return alert("Allow popups to view the report.");
+    w.document.write(htmlStr);
+    w.document.close();
+  };
+
   // Build the replay feed: each attack + whether it is blocked in the current mode.
   const attacks = twin?.attacks || [];
   const policy = twin?.policy;
@@ -139,6 +148,12 @@ export default function ShadowLab({ config }) {
                 <span className="text-safe font-bold">{twin.risk_after}</span>
               </div>
             </div>
+            <button
+              onClick={openReport}
+              className="w-full mono text-xs py-2.5 rounded-lg bg-safe/10 border border-safe/40 text-safe hover:bg-safe/20 transition"
+            >
+              📄 EVIDENCE REPORT (PDF)
+            </button>
           </>
         )}
       </div>
