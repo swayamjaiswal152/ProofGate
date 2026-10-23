@@ -16,6 +16,8 @@ from .core.policy import policy_diff, recommend_policy
 from .core.proxy import KavachProxy
 from .core.runner import run_scenarios, verdict
 from .core.scanner import scan
+from .llm import client as llm_client
+from .llm import twin as twin_mod
 from .models import Policy
 
 app = FastAPI(title="KAVACH / ProofGate", version="0.1.0")
@@ -88,6 +90,38 @@ def simulate_endpoint(body: SimulateBody) -> dict:
             }
             for r in results
         ],
+    }
+
+
+@app.get("/api/llm-status")
+def llm_status() -> dict:
+    return {"available": llm_client.available(), "model": llm_client.MODEL}
+
+
+@app.post("/api/twin")
+def twin_endpoint(body: ConfigBody) -> dict:
+    """Generate the adversarial twin (attacks + legit tasks) and prove before/after.
+
+    Uses Claude when a key is present, otherwise a deterministic fallback.
+    """
+    result = scan(body.config)
+    policy = recommend_policy(result.agent)
+
+    scenarios = twin_mod.generate(result.agent)
+    before = twin_mod.evaluate(scenarios, None)
+    after = twin_mod.evaluate(scenarios, policy)
+
+    return {
+        "source": scenarios["source"],
+        "attacks": scenarios["attacks"],
+        "legit": scenarios["legit"],
+        "risks": scenarios.get("risks", []),
+        "before": before,
+        "after": after,
+        "risk_before": result.risk_score,
+        "risk_after": _residual_risk(after),
+        "policy": policy.model_dump(),
+        "diff": policy_diff(result.agent, policy),
     }
 
 
