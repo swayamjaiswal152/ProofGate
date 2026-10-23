@@ -1,0 +1,30 @@
+name: KAVACH Agent Security Gate
+
+# Blocks a pull request that ships an over-permissioned AI agent.
+# Points at the deliberately-vulnerable example by default so the gate visibly
+# FAILS — set AGENT_CONFIG to your own agent config in real use.
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  kavach-gate:
+    runs-on: ubuntu-latest
+    env:
+      AGENT_CONFIG: backend/examples/support_agent.yaml
+      MAX_RISK: "30"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install KAVACH
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Scan agent & gate on risk
+        working-directory: backend
+        run: |
+          python -m app.cli scan "../${AGENT_CONFIG}" --max-risk "${MAX_RISK}"
