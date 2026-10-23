@@ -74,7 +74,7 @@ export default function App() {
           <div className="text-2xl">🛡️</div>
           <div>
             <div className="mono font-bold tracking-widest text-lg">
-              KAVACH<span className="text-neon">_</span>
+              ProofGate<span className="text-neon">_</span>
             </div>
             <div className="text-[10px] text-muted -mt-1">
               Zero-Trust Runtime Firewall for AI Agents
@@ -100,7 +100,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          <span className="text-[10px] text-muted mono">Syntax Error · IIT Roorkee</span>
+          <span className="text-[10px] text-muted mono">Verify · Don't just Scan</span>
         </div>
       </header>
 

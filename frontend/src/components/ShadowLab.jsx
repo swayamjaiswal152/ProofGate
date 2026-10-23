@@ -139,7 +139,7 @@ export default function ShadowLab({ config }) {
         {twin && (
           <>
             <Scoreboard label="BEFORE — RAW AGENT" data={twin.before} kind="before" />
-            <Scoreboard label="AFTER — KAVACH HARDENED" data={twin.after} kind="after" />
+            <Scoreboard label="AFTER — ProofGate HARDENED" data={twin.after} kind="after" />
             <div className="card p-4 text-center">
               <div className="mono text-[10px] text-muted tracking-widest mb-1">RISK</div>
               <div className="mono text-2xl">
@@ -174,7 +174,7 @@ export default function ShadowLab({ config }) {
                 background: hardened ? "rgba(0,227,154,.08)" : "rgba(255,59,92,.08)",
               }}
             >
-              {hardened ? "✅ KAVACH ON — click to disable" : "⚠ UNPROTECTED — ⚡ HARDEN"}
+              {hardened ? "✅ ProofGate ON — click to disable" : "⚠ UNPROTECTED — ⚡ HARDEN"}
             </button>
           )}
         </div>

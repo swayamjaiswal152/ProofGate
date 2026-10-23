@@ -1,4 +1,4 @@
-"""Core data models for KAVACH / ProofGate.
+"""Core data models for ProofGate.
 
 These Pydantic models are the contract between the scanner, the LLM layer,
 the proxy, and the frontend. Keep them stable — the UI depends on these shapes.

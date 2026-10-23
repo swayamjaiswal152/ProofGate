@@ -12,7 +12,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from ..models import AgentConfig, Capability, Decision, Policy
-from .proxy import KavachProxy
+from .proxy import ProofGateProxy
 
 
 @dataclass
@@ -122,7 +122,7 @@ def build_scenarios(agent: AgentConfig) -> list[Scenario]:
 
 def run_scenarios(agent: AgentConfig, policy: Policy | None) -> list[ScenarioResult]:
     """Replay every scenario through a proxy loaded with the given policy."""
-    proxy = KavachProxy(policy)
+    proxy = ProofGateProxy(policy)
     results: list[ScenarioResult] = []
 
     for sc in build_scenarios(agent):

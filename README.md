@@ -1,10 +1,8 @@
-# 🛡️ KAVACH / ProofGate
+# 🛡️ ProofGate
 
 **Zero-Trust Runtime Permission Firewall with Adversarial Verification for AI Agents**
 
 > Don't just find risky permissions. **Prove your fix is safe without breaking your agent.**
-
-Built for **Syntax Error · IIT Roorkee**.
 
 ---
 
@@ -13,7 +11,7 @@ Built for **Syntax Error · IIT Roorkee**.
 1. **Scan** — parse an agent's tool config, score its risk (0–100), and render an **attack graph** (`agent → tool → resource`).
 2. **Harden** — auto-generate a **least-privilege JIT policy** (ALLOW / ASK / BLOCK per tool).
 3. **Verify** — replay attack + legit scenarios through the policy proxy and **prove** attacks are blocked *and* legit tasks still pass.
-4. **Enforce** — the `@kavach_proxy` firewall intercepts every tool call live (ALLOW/BLOCK).
+4. **Enforce** — the `@proofgate_proxy` firewall intercepts every tool call live (ALLOW/BLOCK).
 
 ## Run it
 
@@ -83,7 +81,7 @@ python -m app.cli scan examples/support_agent.yaml --max-risk 30   # exits 1 (BL
 python -m app.cli scan examples/support_agent_hardened.yaml        # exits 0 (PASSED)
 ```
 
-Wired as a GitHub Action in `.github/workflows/kavach.yml`.
+Wired as a GitHub Action in `.github/workflows/proofgate.yml`.
 
 ## Status
 

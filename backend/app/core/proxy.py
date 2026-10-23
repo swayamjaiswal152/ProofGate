@@ -17,7 +17,7 @@ class PermissionDenied(Exception):
     """Raised when the proxy blocks a tool call."""
 
 
-class KavachProxy:
+class ProofGateProxy:
     """Wraps a set of tools and enforces a policy, recording every decision."""
 
     def __init__(self, policy: Policy | None = None):
@@ -66,8 +66,8 @@ class KavachProxy:
         return fn(**args)
 
 
-def kavach_proxy(proxy: KavachProxy, tool_name: str):
-    """Decorator form: @kavach_proxy(proxy, "delete_order")."""
+def proofgate_proxy(proxy: ProofGateProxy, tool_name: str):
+    """Decorator form: @proofgate_proxy(proxy, "delete_order")."""
 
     def wrapper(fn: Callable[..., Any]) -> Callable[..., Any]:
         def inner(**args: Any) -> Any:

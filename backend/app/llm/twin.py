@@ -107,7 +107,7 @@ def _llm_analysis(agent: AgentConfig, n_legit: int) -> dict:
     """
     catalog = _tool_catalog(agent)
     system = (
-        "You are a security analyst for KAVACH, a defensive firewall that protects "
+        "You are a security analyst for ProofGate, a defensive firewall that protects "
         "AI agents. You classify the risk of an agent's tools and write realistic, "
         "benign user requests the agent should handle. Return ONLY JSON."
     )
@@ -174,10 +174,10 @@ def evaluate(scenarios: dict, policy) -> dict:
     Returns the evidence numbers: attacks blocked X/Y, legit passed X/Y.
     policy=None means the raw (unprotected) agent.
     """
-    from ..core.proxy import KavachProxy
+    from ..core.proxy import ProofGateProxy
     from ..models import Decision
 
-    proxy = KavachProxy(policy)
+    proxy = ProofGateProxy(policy)
 
     attacks = scenarios["attacks"]
     legit = scenarios["legit"]
