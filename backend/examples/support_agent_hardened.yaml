@@ -1,0 +1,12 @@
+# The SAME customer support agent after KAVACH hardening — least privilege.
+# It keeps only the read-only tool it actually needs. This config PASSES the gate.
+name: acme-support-agent
+description: >
+  Customer support agent for ACME Store. Reads order information on behalf of
+  the authenticated customer. Least-privilege: read-only.
+framework: openai-tools
+tools:
+  - name: get_order
+    description: Look up an order by its ID and return its status and items.
+    parameters:
+      order_id: string

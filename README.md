@@ -66,8 +66,27 @@ The **Shadow Lab** view generates an adversarial twin for the agent:
 > Set `ANTHROPIC_API_KEY` to enable the live Claude path; without it the twin
 > falls back to deterministic generation so the demo always works.
 
+## Evidence Ledger (Layer 4)
+
+After a Shadow Lab run, **📄 Evidence Report** renders a print-ready enterprise audit
+report (risk before/after, attack matrix, enforced policy, SOC2/GDPR/HIPAA mapping, and a
+SHA-256 integrity hash). Browser → Save as PDF produces the downloadable artifact.
+
+## CI/CD Gate
+
+The same engine runs as a pull-request gate — a PR that ships an over-permissioned agent
+**fails the check**:
+
+```bash
+cd backend
+python -m app.cli scan examples/support_agent.yaml --max-risk 30   # exits 1 (BLOCKED)
+python -m app.cli scan examples/support_agent_hardened.yaml        # exits 0 (PASSED)
+```
+
+Wired as a GitHub Action in `.github/workflows/kavach.yml`.
+
 ## Status
 
 - [x] Day 1 — scan → harden → verify pipeline, attack graph, dashboard
 - [x] Day 2 — adversarial twin (Claude + fallback), Shadow Lab live firewall console
-- [ ] Day 3 — PDF evidence ledger, polish, demo rehearsal
+- [x] Day 3 — evidence ledger (audit report), CI/CD gate + GitHub Action, demo script
