@@ -1,6 +1,6 @@
 # A deliberately over-permissioned Customer Support Agent.
 # It only NEEDS to read orders, but it was handed write/exec/file/email access.
-# This is the "before" agent in the KAVACH demo.
+# This is the "before" agent in the ProofGate demo.
 name: acme-support-agent
 description: >
   Customer support agent for ACME Store. Helps customers check the status of

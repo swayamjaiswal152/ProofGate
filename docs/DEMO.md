@@ -1,4 +1,4 @@
-# 🎬 KAVACH — Demo Script (90 seconds)
+# 🎬 ProofGate — Demo Script (90 seconds)
 
 **Golden rule:** Do a HACK demo, not a slide demo. Toggle the firewall live and let the
 screen go red → green. That toggle is the moment that wins.
@@ -19,22 +19,22 @@ Before you start:
 > `send_email`, `refund_order`. Way too much power. This is how almost every real agent ships."
 
 **[0:12 — The diagnosis]** *(click **SCAN**)*
-> "KAVACH scans it and builds an attack graph. Risk: **90 out of 100, critical.** Four live
+> "ProofGate scans it and builds an attack graph. Risk: **90 out of 100, critical.** Four live
 > attack paths — remote code execution, secret exfiltration, data destruction, financial fraud —
 > each mapped to the OWASP LLM Top 10." *(the red graph is on screen)*
 
 **[0:28 — The proof of danger]** *(switch to **Shadow Lab**; firewall toggle OFF)*
-> "Now the Adversarial Twin. KAVACH generated **25 attacks** and **25 real customer requests**.
+> "Now the Adversarial Twin. ProofGate generated **25 attacks** and **25 real customer requests**.
 > Watch them hit the agent with the firewall OFF." *(attacks stream in red — BREACH)*
 > "**Zero out of 25 blocked.** The agent is wide open."
 
-**[0:42 — The fix, live]** *(click the firewall toggle → **KAVACH ON**)*
-> "One click. KAVACH issues a least-privilege policy and turns the firewall on." *(same attacks
+**[0:42 — The fix, live]** *(click the firewall toggle → **ProofGate ON**)*
+> "One click. ProofGate issues a least-privilege policy and turns the firewall on." *(same attacks
 > now stream GREEN — BLOCK)* "**25 out of 25 blocked.** And critically —" *(point at the legit
 > scoreboard)* "**25 out of 25 legitimate tasks still pass.** We secured it *without breaking it.*"
 
 **[0:58 — The evidence]** *(click **📄 Evidence Report**)*
-> "KAVACH generates an enterprise audit report: risk **90 → 9**, attacks **0/25 → 25/25**,
+> "ProofGate generates an enterprise audit report: risk **90 → 9**, attacks **0/25 → 25/25**,
 > compliance mapping to SOC 2, GDPR, HIPAA, and a SHA-256 hash that binds the verdict to the
 > tested config. **Verdict: SAFE TO DEPLOY.**"
 
@@ -44,7 +44,7 @@ Before you start:
 > is blocked from merging.**" *(the red ❌ GATE FAILED prints)*
 
 **[1:22 — The close]**
-> "Manual permission tuning is guesswork. **KAVACH is proof that your agent is both secure AND
+> "Manual permission tuning is guesswork. **ProofGate is proof that your agent is both secure AND
 > functional.** Don't just scan — verify."
 
 ---

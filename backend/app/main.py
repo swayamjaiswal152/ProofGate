@@ -1,4 +1,4 @@
-"""KAVACH / ProofGate API.
+"""ProofGate API.
 
 Day-1 skinny pipe: scan -> harden -> verify, plus a live proxy WebSocket.
 The LLM-powered adversarial twin layers on top of these endpoints (Day 2).
@@ -14,14 +14,14 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
 from .core.policy import policy_diff, recommend_policy
-from .core.proxy import KavachProxy
+from .core.proxy import ProofGateProxy
 from .core.runner import run_scenarios, verdict
 from .core.scanner import scan
 from .llm import client as llm_client
 from .llm import twin as twin_mod
 from .models import Policy
 
-app = FastAPI(title="KAVACH / ProofGate", version="0.1.0")
+app = FastAPI(title="ProofGate", version="0.1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -48,7 +48,7 @@ class SimulateBody(BaseModel):
 
 @app.get("/api/health")
 def health() -> dict:
-    return {"status": "ok", "service": "kavach"}
+    return {"status": "ok", "service": "proofgate"}
 
 
 @app.get("/api/example")
@@ -191,7 +191,7 @@ async def proxy_ws(ws: WebSocket) -> None:
     the ALLOW/BLOCK verdict arrive in real time.
     """
     await ws.accept()
-    proxy = KavachProxy()
+    proxy = ProofGateProxy()
     loop = asyncio.get_event_loop()
 
     def on_event(ev):

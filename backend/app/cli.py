@@ -1,4 +1,4 @@
-"""KAVACH CLI — the CI/CD gate.
+"""ProofGate CLI — the CI/CD gate.
 
 Scans an agent config and exits non-zero when it's too risky, so a GitHub
 Action can BLOCK a pull request that ships an over-permissioned agent.
@@ -28,7 +28,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
     config = open(args.config).read()
     result = scan(config)
 
-    print(f"\n🛡️  KAVACH — Agent Security Gate")
+    print(f"\n🛡️  ProofGate — Agent Security Gate")
     print(f"   Agent: {result.agent.name}  ·  Tools: {len(result.agent.tools)}\n")
     print(f"   Risk  {_bar(result.risk_score)} {result.risk_score}/100 "
           f"({result.risk_level.value.upper()})")
@@ -46,7 +46,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
     after = twin_mod.evaluate(scenarios, recommend_policy(result.agent))
     print(f"   Attacks blocked:  raw {before['attacks_blocked']}/{before['attacks_total']}"
           f"  →  hardened {GREEN}{after['attacks_blocked']}/{after['attacks_total']}{RST}")
-    print(f"   Hint: KAVACH can auto-harden this agent to pass the gate.\n")
+    print(f"   Hint: ProofGate can auto-harden this agent to pass the gate.\n")
 
     if result.risk_score > args.max_risk:
         print(f"{RED}❌ GATE FAILED — risk {result.risk_score} exceeds "
@@ -57,7 +57,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="kavach", description="KAVACH agent security gate")
+    parser = argparse.ArgumentParser(prog="proofgate", description="ProofGate agent security gate")
     sub = parser.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("scan", help="scan a config and gate on risk")
     s.add_argument("config", help="path to agent config (yaml/json)")

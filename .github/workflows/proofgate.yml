@@ -1,4 +1,4 @@
-name: KAVACH Agent Security Gate
+name: ProofGate Agent Security Gate
 
 # Blocks a pull request that ships an over-permissioned AI agent.
 # Points at the deliberately-vulnerable example by default so the gate visibly
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  kavach-gate:
+  proofgate-gate:
     runs-on: ubuntu-latest
     env:
       AGENT_CONFIG: backend/examples/support_agent.yaml
@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install KAVACH
+      - name: Install ProofGate
         working-directory: backend
         run: pip install -r requirements.txt
 

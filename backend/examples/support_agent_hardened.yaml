@@ -1,4 +1,4 @@
-# The SAME customer support agent after KAVACH hardening — least privilege.
+# The SAME customer support agent after ProofGate hardening — least privilege.
 # It keeps only the read-only tool it actually needs. This config PASSES the gate.
 name: acme-support-agent
 description: >
