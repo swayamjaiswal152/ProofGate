@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   tests:
@@ -28,9 +29,12 @@ jobs:
         working-directory: backend
         run: python -m pytest -q
 
-  security-gate-self-test:
-    name: Verify Vulnerable Agent Is Blocked
+  security-gate:
+    name: ProofGate Security Gate
     runs-on: ubuntu-latest
+    env:
+      AGENT_CONFIG: backend/examples/support_agent.yaml
+      MAX_RISK: "30"
 
     steps:
       - uses: actions/checkout@v4
@@ -39,27 +43,33 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
+      - name: Install ProofGate
         working-directory: backend
         run: pip install -r requirements.txt
 
-      - name: Verify gate rejects vulnerable example
+      - name: Scan agent and generate report
+        id: gate
+        continue-on-error: true
         working-directory: backend
-        shell: bash
         run: |
-          set +e
-          output=$(python -m app.cli scan examples/support_agent.yaml --max-risk 30 2>&1)
-          status=$?
-          set -e
+          python -m app.cli scan "../${AGENT_CONFIG}" \
+            --max-risk "${MAX_RISK}" \
+            --md "${GITHUB_WORKSPACE}/proofgate-report.md"
 
-          printf '%s\n' "$output"
-
-          if [ "$status" -eq 1 ] && \
-             printf '%s\n' "$output" | grep -q "GATE FAILED"; then
-            echo "PASS: ProofGate correctly blocked the vulnerable agent."
+      - name: Post report as PR comment
+        if: always() && github.event_name == 'pull_request' && steps.gate.outcome != 'skipped'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "${GITHUB_WORKSPACE}/proofgate-report.md" ]; then
+            gh pr comment "${{ github.event.pull_request.number }}" \
+              --body-file "${GITHUB_WORKSPACE}/proofgate-report.md"
           else
-            echo "FAIL: Expected ProofGate to block the vulnerable agent."
-            exit 1
+            echo "No report was generated."
           fi
 
-
+      - name: Enforce gate
+        if: steps.gate.outcome == 'failure'
+        run: |
+          echo "ProofGate blocked this PR — see the report comment."
+          exit 1

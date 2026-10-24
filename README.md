@@ -81,7 +81,38 @@ python -m app.cli scan examples/support_agent.yaml --max-risk 30   # exits 1 (BL
 python -m app.cli scan examples/support_agent_hardened.yaml        # exits 0 (PASSED)
 ```
 
-Wired as a GitHub Action in `.github/workflows/proofgate.yml`.
+Flags: `--max-risk <0-100>` sets the gate threshold (default 30); `--md <path>` writes a
+markdown report for posting as a PR comment.
+
+### Auto-comment on pull requests
+
+Wired as a GitHub Action in `.github/workflows/proofgate.yml`. On every pull request the
+Action:
+
+1. Scans the agent config and computes its risk + attack paths.
+2. **Posts the full security report as a PR comment** (like CodeQL / Snyk / SonarCloud) —
+   risk score, attacks blocked before/after hardening, and an OWASP-mapped attack-path table.
+3. **Blocks the merge** (fails the check) when risk exceeds the threshold.
+
+The report step runs even when the gate fails (`continue-on-error` on the scan, enforced in a
+later step), so the comment is always posted. Posting requires `permissions: pull-requests:
+write`, and the comment is rendered by `app.cli --md` + `gh pr comment`.
+
+Point the Action at your own agent by setting the `AGENT_CONFIG` / `MAX_RISK` env in the
+workflow. It ships pointed at the deliberately-vulnerable example so the gate visibly fails.
+
+Example PR comment:
+
+> ## ❌ ProofGate Security Gate — FAILED (merge blocked)
+> **Agent:** `acme-support-agent` · **Tools:** 7
+>
+> | Metric | Value |
+> | --- | --- |
+> | Risk score | **90/100** (CRITICAL) |
+> | Attacks blocked (after ProofGate hardening) | **10/10** |
+> | Legit tasks still passing | 10/10 |
+>
+> 🔴 Attack paths: Remote Code Execution, Secret Exfiltration, Data Destruction, Financial Fraud
 
 ## Status
 
