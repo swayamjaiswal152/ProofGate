@@ -18,7 +18,7 @@ class PermissionDenied(Exception):
 
 
 class ProofGateProxy:
-    """Wraps a set of tools and enforces a policy, recording every decision."""
+    """Wrap tools, enforce policy, and record every decision."""
 
     def __init__(self, policy: Policy | None = None):
         self.policy = policy
@@ -29,7 +29,7 @@ class ProofGateProxy:
         self.policy = policy
 
     def subscribe(self, cb: Callable[[ProxyEvent], None]) -> None:
-        """Register a callback invoked for every ProxyEvent (used by WebSockets)."""
+        """Register a callback for each ProxyEvent."""
         self._subscribers.append(cb)
 
     def _emit(self, event: ProxyEvent) -> None:
@@ -38,36 +38,53 @@ class ProofGateProxy:
             try:
                 cb(event)
             except Exception:
+                # A subscriber failure must not break enforcement.
                 pass
 
-    def evaluate(self, tool: str, args: dict[str, Any] | None = None) -> ProxyEvent:
-        """Decide on a tool call without executing it. Returns the recorded event."""
+    def evaluate(
+        self, tool: str, args: dict[str, Any] | None = None
+    ) -> ProxyEvent:
+        """Evaluate a tool call without executing it."""
         args = args or {}
+
         if self.policy is None:
-            decision, reason = Decision.ALLOW, "No policy loaded (unprotected)."
+            decision = Decision.BLOCK
+            reason = "No policy loaded; default-deny."
         else:
-            rule = self.policy.decision_for(tool)
-            decision, reason = rule.decision, rule.reason
+            try:
+                rule = self.policy.decision_for(tool)
+                decision, reason = rule.decision, rule.reason
+            except Exception:
+                # Fail closed if policy evaluation fails.
+                decision = Decision.BLOCK
+                reason = "Policy evaluation failed; default-deny."
 
         event = ProxyEvent(
-            ts=time.time(), tool=tool, args=args, decision=decision, reason=reason
+            ts=time.time(),
+            tool=tool,
+            args=args,
+            decision=decision,
+            reason=reason,
         )
         self._emit(event)
         return event
 
     def call(self, tool: str, fn: Callable[..., Any], **args: Any) -> Any:
-        """Enforce policy, then run the real tool fn if allowed."""
+        """Run the real tool only when the policy explicitly allows it."""
         event = self.evaluate(tool, args)
-        if event.decision == Decision.BLOCK:
+
+        if event.decision != Decision.ALLOW:
+            if event.decision == Decision.ASK:
+                raise PermissionDenied(
+                    "Awaiting human approval (JIT): " + event.reason
+                )
             raise PermissionDenied(event.reason)
-        if event.decision == Decision.ASK:
-            # In the demo we treat ASK as blocked-pending-approval.
-            raise PermissionDenied("Awaiting human approval (JIT): " + event.reason)
+
         return fn(**args)
 
 
 def proofgate_proxy(proxy: ProofGateProxy, tool_name: str):
-    """Decorator form: @proofgate_proxy(proxy, "delete_order")."""
+    """Decorator form: @proofgate_proxy(proxy, 'delete_order')."""
 
     def wrapper(fn: Callable[..., Any]) -> Callable[..., Any]:
         def inner(**args: Any) -> Any:
