@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   tests:
     name: Backend Tests
@@ -40,7 +44,7 @@ jobs:
         working-directory: backend
         run: pip install -r requirements.txt
 
-      - name: Verify gate rejects the vulnerable example
+      - name: Verify gate rejects vulnerable example
         working-directory: backend
         shell: bash
         run: |
@@ -55,7 +59,16 @@ jobs:
              printf '%s\n' "$output" | grep -q "GATE FAILED"; then
             echo "PASS: ProofGate correctly blocked the vulnerable agent."
           else
-            echo "FAIL: ProofGate did not reject the vulnerable agent as expected."
+            echo "FAIL: Expected ProofGate to block the vulnerable agent."
             exit 1
           fi
+
+      - name: Upload security report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: proofgate-security-report
+          path: backend/proofgate-report.md
+          if-no-files-found: ignore
+
 
