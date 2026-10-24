@@ -20,9 +20,9 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install ProofGate
+      - name: Install ProofGate (gate dependencies)
         working-directory: backend
-        run: pip install -r requirements.txt
+        run: pip install pyyaml pydantic
 
       - name: Scan agent & gate on risk
         working-directory: backend
