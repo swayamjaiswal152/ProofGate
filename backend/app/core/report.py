@@ -182,14 +182,14 @@ def build_report_html(data: dict) -> str:
 
 def assemble_evidence(config: str) -> dict:
     """Run the full pipeline and return the evidence dict the report expects."""
-    from ..core.policy import recommend_policy
+    from ..core.policy import open_policy, recommend_policy
     from ..core.scanner import scan
     from ..llm import twin as twin_mod
 
     result = scan(config)
     policy = recommend_policy(result.agent)
     scenarios = twin_mod.generate(result.agent)
-    before = twin_mod.evaluate(scenarios, None)
+    before = twin_mod.evaluate(scenarios, open_policy(result.agent))
     after = twin_mod.evaluate(scenarios, policy)
 
     leaked = after["attacks_total"] - after["attacks_blocked"]

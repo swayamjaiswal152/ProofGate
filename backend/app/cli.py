@@ -11,7 +11,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from .core.policy import recommend_policy
+from .core.policy import open_policy, recommend_policy
 from .core.scanner import scan
 from .llm import twin as twin_mod
 
@@ -81,7 +81,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
 
     # Prove hardening would fix it (adds the before/after line to CI logs).
     scenarios = twin_mod.generate(result.agent, 10, 10)
-    before = twin_mod.evaluate(scenarios, None)
+    before = twin_mod.evaluate(scenarios, open_policy(result.agent))
     after = twin_mod.evaluate(scenarios, recommend_policy(result.agent))
     print(f"   Attacks blocked:  raw {before['attacks_blocked']}/{before['attacks_total']}"
           f"  →  hardened {GREEN}{after['attacks_blocked']}/{after['attacks_total']}{RST}")

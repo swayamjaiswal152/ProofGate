@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from .core.policy import policy_diff, recommend_policy
+from .core.policy import open_policy, policy_diff, recommend_policy
 from .core.proxy import ProofGateProxy
 from .core.runner import run_scenarios, verdict
 from .core.scanner import scan
@@ -109,7 +109,7 @@ def twin_endpoint(body: ConfigBody) -> dict:
     policy = recommend_policy(result.agent)
 
     scenarios = twin_mod.generate(result.agent)
-    before = twin_mod.evaluate(scenarios, None)
+    before = twin_mod.evaluate(scenarios, open_policy(result.agent))
     after = twin_mod.evaluate(scenarios, policy)
 
     return {
@@ -162,7 +162,7 @@ def verify_endpoint(body: ConfigBody) -> dict:
     result = scan(body.config)
     policy = recommend_policy(result.agent)
 
-    before = verdict(run_scenarios(result.agent, None))
+    before = verdict(run_scenarios(result.agent, open_policy(result.agent)))
     after = verdict(run_scenarios(result.agent, policy))
     return {
         "risk_before": result.risk_score,

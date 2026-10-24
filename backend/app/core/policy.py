@@ -93,6 +93,23 @@ def recommend_policy(agent: AgentConfig, task_hint: str = "") -> Policy:
     )
 
 
+def open_policy(agent: AgentConfig) -> Policy:
+    """A permissive policy where every tool is ALLOWed.
+
+    Models the RAW, unprotected agent (no ProofGate) for the 'before' baseline.
+    The proxy is fail-closed (no policy => deny), so the unprotected baseline must
+    be represented explicitly rather than by passing no policy.
+    """
+    return Policy(
+        agent=agent.name,
+        task_hint="",
+        rules=[
+            ToolPolicy(tool=t.name, decision=Decision.ALLOW, reason="Unprotected agent.")
+            for t in agent.tools
+        ],
+    )
+
+
 def policy_diff(agent: AgentConfig, policy: Policy) -> list[dict]:
     """Human-readable before/after of what hardening changed, for the UI."""
     out = []
