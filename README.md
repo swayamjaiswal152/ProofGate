@@ -4,8 +4,11 @@
 
 > Don't just find risky permissions. **Prove your fix is safe without breaking your agent.**
 
-**🔗 Live demo:** _<set after deploy — e.g. https://proofgate.vercel.app>_
+**🔗 Live demo:** **https://proof-gate-beryl.vercel.app** &nbsp;·&nbsp; API: https://proofgate-api-fr7y.onrender.com
 **📄 Example blocked PR:** [PR #1](https://github.com/swayamjaiswal152/ProofGate/pull/1) — the CI gate blocking an over-permissioned agent.
+
+> The live demo runs in safe fallback mode (no API key). The backend sleeps after
+> inactivity — the first load may take ~50s to wake, then it's instant.
 
 ---
 
