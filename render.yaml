@@ -1,0 +1,17 @@
+# Render Blueprint for the ProofGate backend (FastAPI).
+# On Render: New → Blueprint → connect this repo → it reads this file.
+# Runs in safe fallback mode by default (no ANTHROPIC_API_KEY = deterministic
+# twin, no cost). Add ANTHROPIC_API_KEY as an env var to enable live Claude.
+services:
+  - type: web
+    name: proofgate-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12"
+      # - key: ANTHROPIC_API_KEY   # optional: uncomment + set in dashboard for live Claude
+      #   sync: false

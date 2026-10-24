@@ -4,6 +4,9 @@
 
 > Don't just find risky permissions. **Prove your fix is safe without breaking your agent.**
 
+**🔗 Live demo:** _<set after deploy — e.g. https://proofgate.vercel.app>_
+**📄 Example blocked PR:** [PR #1](https://github.com/swayamjaiswal152/ProofGate/pull/1) — the CI gate blocking an over-permissioned agent.
+
 ---
 
 ## What it does
@@ -33,6 +36,28 @@ npm run dev
 ```
 
 Open http://localhost:5173, click **SCAN**, then **ONE-CLICK HARDEN**.
+
+> `localhost` only works on the machine running the servers. For a link anyone can open,
+> see **Deploy** below.
+
+## Deploy (live, free)
+
+Two pieces: backend on **Render**, frontend on **Vercel**. Runs in safe fallback mode by
+default (no API key = deterministic twin, no cost); the demo looks identical.
+
+**1. Backend → Render**
+- New → **Blueprint** → connect this repo. It reads `render.yaml` (root dir `backend`,
+  start `uvicorn app.main:app --host 0.0.0.0 --port $PORT`).
+- Copy the deployed URL, e.g. `https://proofgate-api.onrender.com`.
+- _(Optional)_ Add `ANTHROPIC_API_KEY` in the dashboard to enable live Claude.
+
+**2. Frontend → Vercel**
+- New Project → import this repo → **Root Directory = `frontend`** (framework: Vite, auto).
+- Add env var **`VITE_API`** = your Render backend URL (from step 1).
+- Deploy. The resulting URL is your live demo link.
+
+> Render's free tier sleeps after inactivity — the first request may take ~50s to wake.
+> Hit the backend URL once before demoing.
 
 ## Layout
 
