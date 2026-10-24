@@ -7,6 +7,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write   # needed to post the report as a PR comment
+
 jobs:
   proofgate-gate:
     runs-on: ubuntu-latest
@@ -25,6 +29,23 @@ jobs:
         run: pip install pyyaml pydantic
 
       - name: Scan agent & gate on risk
+        id: gate
+        continue-on-error: true   # don't stop the job; we post the report first
         working-directory: backend
         run: |
-          python -m app.cli scan "../${AGENT_CONFIG}" --max-risk "${MAX_RISK}"
+          python -m app.cli scan "../${AGENT_CONFIG}" \
+            --max-risk "${MAX_RISK}" --md "${GITHUB_WORKSPACE}/proofgate-report.md"
+
+      - name: Post report as PR comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr comment "${{ github.event.pull_request.number }}" \
+            --body-file "${GITHUB_WORKSPACE}/proofgate-report.md"
+
+      - name: Enforce gate
+        if: steps.gate.outcome == 'failure'
+        run: |
+          echo "ProofGate blocked this PR — see the comment above."
+          exit 1
