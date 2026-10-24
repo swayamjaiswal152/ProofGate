@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   tests:
@@ -62,13 +61,5 @@ jobs:
             echo "FAIL: Expected ProofGate to block the vulnerable agent."
             exit 1
           fi
-
-      - name: Upload security report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: proofgate-security-report
-          path: backend/proofgate-report.md
-          if-no-files-found: ignore
 
 
