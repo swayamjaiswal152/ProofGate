@@ -5,6 +5,10 @@ name: ProofGate Agent Security Gate
 # FAILS — set AGENT_CONFIG to your own agent config in real use.
 on:
   pull_request:
+    # Only gate PRs that actually change an agent config — so normal code/doc/test
+    # PRs are never falsely blocked. Point this at wherever your agent configs live.
+    paths:
+      - "backend/examples/**"
   workflow_dispatch:
 
 permissions:
