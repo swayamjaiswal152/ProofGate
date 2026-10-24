@@ -40,3 +40,8 @@ tools:
     description: Permanently delete an order record from the database.
     parameters:
       order_id: string
+
+  - name: run_sql
+    description: Run an arbitrary SQL query against the production database.
+    parameters:
+      query: string
