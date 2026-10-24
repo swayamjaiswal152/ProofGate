@@ -1,18 +1,15 @@
-name: ProofGate Agent Security Gate
 
-# Blocks a pull request that ships an over-permissioned AI agent.
-# Points at the deliberately-vulnerable example by default so the gate visibly
-# FAILS — set AGENT_CONFIG to your own agent config in real use.
+name: ProofGate CI
+
 on:
   pull_request:
   workflow_dispatch:
 
 jobs:
-  proofgate-gate:
+  tests:
+    name: Backend Tests
     runs-on: ubuntu-latest
-    env:
-      AGENT_CONFIG: backend/examples/support_agent.yaml
-      MAX_RISK: "30"
+
     steps:
       - uses: actions/checkout@v4
 
@@ -20,11 +17,45 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install ProofGate
+      - name: Install dependencies
         working-directory: backend
         run: pip install -r requirements.txt
 
-      - name: Scan agent & gate on risk
+      - name: Run tests
         working-directory: backend
+        run: python -m pytest -q
+
+  security-gate-self-test:
+    name: Verify Vulnerable Agent Is Blocked
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Verify gate rejects the vulnerable example
+        working-directory: backend
+        shell: bash
         run: |
-          python -m app.cli scan "../${AGENT_CONFIG}" --max-risk "${MAX_RISK}"
+          set +e
+          output=$(python -m app.cli scan examples/support_agent.yaml --max-risk 30 2>&1)
+          status=$?
+          set -e
+
+          printf '%s\n' "$output"
+
+          if [ "$status" -eq 1 ] && \
+             printf '%s\n' "$output" | grep -q "GATE FAILED"; then
+            echo "PASS: ProofGate correctly blocked the vulnerable agent."
+          else
+            echo "FAIL: ProofGate did not reject the vulnerable agent as expected."
+            exit 1
+          fi
+
