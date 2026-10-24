@@ -46,6 +46,25 @@ class SimulateBody(BaseModel):
     policy: Policy | None = None  # omit to run against the raw (unprotected) agent
 
 
+@app.get("/")
+def root() -> dict:
+    return {
+        "name": "ProofGate",
+        "description": "Zero-Trust Runtime Permission Firewall for AI Agents",
+        "status": "running",
+        "docs": "/docs",
+        "health": "/api/health",
+        "endpoints": [
+            "/api/scan",
+            "/api/harden",
+            "/api/verify",
+            "/api/twin",
+            "/api/report",
+            "/api/llm-status",
+        ],
+    }
+
+
 @app.get("/api/health")
 def health() -> dict:
     return {"status": "ok", "service": "proofgate"}
